@@ -1,4 +1,4 @@
-package sk.yoz.selenium.utils
+package sk.yoz.flasheia.utils
 {
     import flash.display.DisplayObject;
     import flash.display.DisplayObjectContainer;

@@ -1,2 +1,6 @@
 
-/bin-debug
+/.metadata
+/ApplicationDemo/.settings
+/ApplicationDemo/bin-debug
+/FlashEIALibrary/.settings
+/FlashEIALibrary/bin

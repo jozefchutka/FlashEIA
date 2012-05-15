@@ -6,20 +6,24 @@
                applicationComplete="init()">
     <fx:Script>
         <![CDATA[
-            import sk.yoz.selenium.Selenium;
-            import sk.yoz.selenium.utils.MouseEventSimulator;
+            import sk.yoz.flasheia.FlashEIA;
+            import sk.yoz.flasheia.utils.MouseEventSimulator;
             
-            private var selenium:Selenium = new Selenium;
+            private var eia:FlashEIA = new FlashEIA;
             
             private function init():void
             {
-                selenium.init(stage);
+                Security.allowDomain("*");
+                
+                eia.init(stage);
             }
             
             private function log(event:Event):void
             {
                 textArea.appendText(event.target.toString());
                 textArea.appendText("\n");
+                
+                eia.notify(event.target.toString());
             }
             
             private function execute(event:Event):void

@@ -1,15 +1,15 @@
-package sk.yoz.selenium
+package sk.yoz.flasheia
 {
     import flash.display.Stage;
     import flash.external.ExternalInterface;
     
-    import sk.yoz.selenium.utils.MouseEventSimulator;
+    import sk.yoz.flasheia.utils.MouseEventSimulator;
 
-    public class Selenium
+    public class FlashEIA
     {
         private var stage:Stage;
         
-        private var script:XML = <script>
+        private static const SCRIPT:XML = <script>
             <![CDATA[
                 function(){
                     window.getFlash = function(id)
@@ -36,12 +36,19 @@ package sk.yoz.selenium
             
             ExternalInterface.addCallback("clickAt", clickAt);
             
-            ExternalInterface.call(script.toString());
+            ExternalInterface.call(SCRIPT);
+            
+            notify("init");
         }
         
         public function clickAt(x:Number, y:Number):void
         {
             MouseEventSimulator.clickAt(stage, x, y);
+        }
+        
+        public function notify(message:String):void
+        {
+            ExternalInterface.call("alert", message);
         }
     }
 }
