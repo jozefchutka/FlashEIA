@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx"
+               minWidth="800" minHeight="600" backgroundColor="0xcccccc"
+               applicationComplete="init()" 
+               click="onClick(event)" mouseDown="onClick(event)" mouseUp="onClick(event)">
+    <fx:Script>
+        <![CDATA[
+            import sk.yoz.flasheia.FlashEIA;
+            import sk.yoz.flasheia.events.FlashEIAEvent;
+            
+            private var eia:FlashEIA = new FlashEIA;
+            private var executing:Boolean;
+            
+            private function init():void
+            {
+                Security.allowDomain("*");
+                
+                eia.addEventListener(FlashEIAEvent.EXECUTION_BEGIN, onExecutionBegin);
+                eia.addEventListener(FlashEIAEvent.EXECUTION_END, onExecutionEnd);
+                eia.init(stage);
+            }
+            
+            private function log(message:String):void
+            {
+                textArea.appendText(message + "\n");
+            }
+            
+            private function onClick(event:MouseEvent):void
+            {
+                var pad:String = executing ? "     " : "";
+                var target:String = event.target.toString();
+                if(target.length > 40)
+                    target = target.substr(0, 20) + "..." + target.substr(-20);
+                log(pad + "MouseEvent(" + event.type + ", " + event.stageX + ", " + event.stageY + ", " + target + ")");
+            }
+            
+            private function onExecutionBegin(event:FlashEIAEvent):void
+            {
+                executing = true;
+                log("FlashEIA." + event.method + "(" + event.arguments.join(", ") + ")");
+            }
+            
+            private function onExecutionEnd(event:FlashEIAEvent):void
+            {
+                executing = false;
+            }
+            
+            private function onButtonChange():void
+            {
+                eia.notify(Button1.selected ? "selected" : "not");
+            }
+            
+            private function onListChange():void
+            {
+                eia.notify(list.selectedItem);
+            }
+        ]]>
+    </fx:Script>
+    <s:layout>
+        <s:HorizontalLayout />
+    </s:layout>
+    <s:VGroup width="100%" height="100%">
+        <s:ToggleButton id="Button1" label="Button1" change="onButtonChange()"/>
+        <s:TabBar dataProvider="{viewStack}" />
+        <mx:ViewStack id="viewStack">
+            <s:NavigatorContent label="Tab1"/>
+            <s:NavigatorContent label="Tab2">
+                <s:List id="list" change="onListChange()">
+                    <s:dataProvider>
+                        <s:ArrayCollection>
+                            <fx:String>One</fx:String>
+                            <fx:String>Two</fx:String>
+                        </s:ArrayCollection>
+                    </s:dataProvider>
+                </s:List>
+            </s:NavigatorContent>
+        </mx:ViewStack>
+    </s:VGroup>
+    <s:TextArea id="textArea" width="100%" height="100%"/>
+</s:Application>

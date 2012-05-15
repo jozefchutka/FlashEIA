@@ -1,26 +1,35 @@
 package sk.yoz.flasheia
 {
     import flash.display.Stage;
+    import flash.events.EventDispatcher;
     import flash.external.ExternalInterface;
     
+    import sk.yoz.flasheia.events.FlashEIAEvent;
     import sk.yoz.flasheia.utils.MouseEventSimulator;
 
-    public class FlashEIA
+    [Event(name="executionBegin", type="sk.yoz.flasheia.events.FlashEIAEvent")]
+    [Event(name="executionEnd", type="sk.yoz.flasheia.events.FlashEIAEvent")]
+    public class FlashEIA extends EventDispatcher
     {
         private var stage:Stage;
         
         private static const SCRIPT:XML = <script>
             <![CDATA[
                 function(){
-                    window.getFlash = function(id)
-                    {
-                        return document.getElementById(id);
-                    }
+                    if(window.FlashEIA)
+                        return;
                     
-                    window.clickAt = function(id, x, y)
-                    {
-                        window.getFlash(id).clickAt(x, y);
-                    }
+                    window.FlashEIA = {
+                        getFlash: function(id)
+                        {
+                            return document.getElementById(id);
+                        },
+                        
+                        clickAt: function(id, x, y)
+                        {
+                            FlashEIA.getFlash(id).clickAt(x, y);
+                        }
+                    };
                 }
             ]]>
             </script>
@@ -38,17 +47,36 @@ package sk.yoz.flasheia
             
             ExternalInterface.call(SCRIPT);
             
-            notify("init");
-        }
-        
-        public function clickAt(x:Number, y:Number):void
-        {
-            MouseEventSimulator.clickAt(stage, x, y);
+            notify("FlashEIA");
         }
         
         public function notify(message:String):void
         {
             ExternalInterface.call("alert", message);
+        }
+        
+        private function clickAt(x:Number, y:Number):void
+        {
+            dispatchBegin("clickAt", arguments);
+            MouseEventSimulator.downAt(stage, x, y);
+            MouseEventSimulator.upAt(stage, x, y);
+            MouseEventSimulator.clickAt(stage, x, y);
+            dispatchEnd("clickAt", arguments);
+        }
+        
+        private function dispatchBegin(method:String, arguments:Array):void
+        {
+            dispatch(FlashEIAEvent.EXECUTION_BEGIN, method, arguments);
+        }
+        
+        private function dispatchEnd(method:String, arguments:Array):void
+        {
+            dispatch(FlashEIAEvent.EXECUTION_END, method, arguments);
+        }
+        
+        private function dispatch(type:String, method:String, arguments:Array):void
+        {
+            dispatchEvent(new FlashEIAEvent(type, method, arguments));
         }
     }
 }

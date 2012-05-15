@@ -22,8 +22,7 @@
         -->
         <style type="text/css" media="screen"> 
             html, body  { height:100%; }
-            body { margin:0; padding:0; overflow:auto; text-align:center; 
-                   background-color: ${bgcolor}; }   
+            body { margin:0; padding:0; overflow:auto; text-align:center;}
             object:focus { outline:none; }
             #flashContent { display:none; }
         </style>
@@ -41,15 +40,18 @@
             // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
             var xiSwfUrlStr = "${expressInstallSwf}";
             var flashvars = {};
+            
             var params = {};
             params.quality = "high";
             params.bgcolor = "${bgcolor}";
             params.allowscriptaccess = "sameDomain";
             params.allowfullscreen = "true";
+            
             var attributes = {};
             attributes.id = "${application}";
             attributes.name = "${application}";
             attributes.align = "middle";
+            
             swfobject.embedSWF(
                 "${swf}.swf", "flashContent", 
                 "${width}", "${height}", 
@@ -60,7 +62,9 @@
         </script>
     </head>
     <body>
-        <button onclick="javascript:clickAt('${application}', 10, 10)">clickAt(10, 10)</button>
+        <button onclick="javascript:FlashEIA.clickAt('${application}', 10, 10)">clickAt(10, 10)</button>
+        <button onclick="javascript:FlashEIA.clickAt('${application}', 103, 34)">clickAt(103, 34)</button>
+        <button onclick="javascript:FlashEIA.clickAt('${application}', 23, 90)">clickAt(23, 90)</button>
         
         <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
              JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
