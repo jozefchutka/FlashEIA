@@ -11,6 +11,8 @@ package sk.yoz.flasheia
     [Event(name="executionEnd", type="sk.yoz.flasheia.events.FlashEIAEvent")]
     public class FlashEIA extends EventDispatcher
     {
+        private static var _instance:FlashEIA;
+        
         private var stage:Stage;
         
         private static const SCRIPT:XML = <script>
@@ -32,7 +34,14 @@ package sk.yoz.flasheia
                     };
                 }
             ]]>
-            </script>
+            </script>;
+        
+        public static function get instance():FlashEIA
+        {
+            if(!_instance)
+                _instance = new FlashEIA;
+            return _instance;
+        }
         
         public function init(stage:Stage):void
         {

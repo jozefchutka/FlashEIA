@@ -1,2 +1,2 @@
-Selenium
+FlashEIA - ExternalInterface Access
 ========

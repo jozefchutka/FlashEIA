@@ -10,7 +10,7 @@
             import sk.yoz.flasheia.FlashEIA;
             import sk.yoz.flasheia.events.FlashEIAEvent;
             
-            private var eia:FlashEIA = new FlashEIA;
+            private var eia:FlashEIA = FlashEIA.instance;
             private var executing:Boolean;
             
             private function init():void
