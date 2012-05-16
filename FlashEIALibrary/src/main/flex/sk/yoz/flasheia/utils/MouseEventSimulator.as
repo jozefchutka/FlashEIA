@@ -24,6 +24,26 @@ package sk.yoz.flasheia.utils
             mouseAt(MouseEvent.CLICK, stage, x, y);
         }
         
+        public static function mouseMoveAt(stage:Stage, x:Number, y:Number):void
+        {
+            mouseAt(MouseEvent.MOUSE_MOVE, stage, x, y);
+        }
+        
+        public static function mouseOverAt(stage:Stage, x:Number, y:Number):void
+        {
+            mouseAt(MouseEvent.MOUSE_OVER, stage, x, y);
+        }
+        
+        public static function rollOverAt(stage:Stage, x:Number, y:Number):void
+        {
+            mouseAt(MouseEvent.ROLL_OVER, stage, x, y);
+        }
+        
+        public static function rollOutAt(stage:Stage, x:Number, y:Number):void
+        {
+            mouseAt(MouseEvent.ROLL_OUT, stage, x, y);
+        }
+        
         private static function mouseAt(type:String, stage:Stage, x:Number, y:Number):void
         {
             var result:InteractiveObject = getInteractiveObjectAt(stage, stage.root, x, y);

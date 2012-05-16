@@ -4,19 +4,24 @@
                xmlns:mx="library://ns.adobe.com/flex/mx"
                minWidth="800" minHeight="600" backgroundColor="0xcccccc"
                applicationComplete="init()" 
-               click="onClick(event)" mouseDown="onClick(event)" mouseUp="onClick(event)">
+               click="onMouseEvent(event)" mouseDown="onMouseEvent(event)" 
+               mouseMove="onMouseEvent(event)" mouseUp="onMouseEvent(event)">
     <fx:Script>
         <![CDATA[
+            import mx.events.DragEvent;
+            
             import sk.yoz.flasheia.FlashEIA;
             import sk.yoz.flasheia.events.FlashEIAEvent;
             
-            private var eia:FlashEIA = FlashEIA.instance;
+            private var eia:FlashEIA;
             private var executing:Boolean;
             
             private function init():void
             {
                 Security.allowDomain("*");
                 
+                eia = new FlashEIA;
+                //eia.silent = true;
                 eia.addEventListener(FlashEIAEvent.EXECUTION_BEGIN, onExecutionBegin);
                 eia.addEventListener(FlashEIAEvent.EXECUTION_END, onExecutionEnd);
                 eia.init(stage);
@@ -27,8 +32,17 @@
                 textArea.appendText(message + "\n");
             }
             
-            private function onClick(event:MouseEvent):void
+            private function notify(message:String):void
             {
+                trace("notify >> ", message);
+                eia.notify(message);
+            }
+            
+            private function onMouseEvent(event:MouseEvent):void
+            {
+                if(!executing && !logNativeCheckBox.selected)
+                    return;
+                
                 var pad:String = executing ? "     " : "";
                 var target:String = event.target.toString();
                 if(target.length > 40)
@@ -49,34 +63,47 @@
             
             private function onButtonChange():void
             {
-                eia.notify(Button1.selected ? "selected" : "not");
+                notify(Button1.selected ? "selected" : "not");
             }
             
             private function onListChange():void
             {
-                eia.notify(list.selectedItem);
+                notify(list1.selectedItem);
+            }
+            
+            private function onDragDrop(event:DragEvent):void
+            {
+                var item:String = event.dragSource.dataForFormat(event.dragSource.formats[0])[0];
+                notify(event.action + ":" + item);
             }
         ]]>
     </fx:Script>
     <s:layout>
         <s:HorizontalLayout />
     </s:layout>
+    
     <s:VGroup width="100%" height="100%">
         <s:ToggleButton id="Button1" label="Button1" change="onButtonChange()"/>
         <s:TabBar dataProvider="{viewStack}" />
         <mx:ViewStack id="viewStack">
             <s:NavigatorContent label="Tab1"/>
             <s:NavigatorContent label="Tab2">
-                <s:List id="list" change="onListChange()">
-                    <s:dataProvider>
-                        <s:ArrayCollection>
-                            <fx:String>One</fx:String>
-                            <fx:String>Two</fx:String>
-                        </s:ArrayCollection>
-                    </s:dataProvider>
-                </s:List>
+                <s:HGroup>
+                    <s:List id="list1" change="onListChange()" dragEnabled="true">
+                        <s:dataProvider>
+                            <s:ArrayCollection>
+                                <fx:String>One</fx:String>
+                                <fx:String>Two</fx:String>
+                            </s:ArrayCollection>
+                        </s:dataProvider>
+                    </s:List>
+                    <s:List id="list2" dropEnabled="true" dragDrop="onDragDrop(event)"/>
+                </s:HGroup>
             </s:NavigatorContent>
         </mx:ViewStack>
     </s:VGroup>
-    <s:TextArea id="textArea" width="100%" height="100%"/>
+    <s:VGroup width="100%" height="100%">
+        <s:CheckBox id="logNativeCheckBox" label="log native"/>
+        <s:TextArea id="textArea" width="100%" height="100%"/>
+    </s:VGroup>
 </s:Application>

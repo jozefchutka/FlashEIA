@@ -62,9 +62,10 @@
         </script>
     </head>
     <body>
-        <button onclick="javascript:FlashEIA.clickAt('${application}', 10, 10)">clickAt(10, 10)</button>
-        <button onclick="javascript:FlashEIA.clickAt('${application}', 103, 34)">clickAt(103, 34)</button>
-        <button onclick="javascript:FlashEIA.clickAt('${application}', 23, 90)">clickAt(23, 90)</button>
+        <div>
+            <input type="text" id="commandTextInput" value="FlashEIA.dragFromTo('${application}', 26, 70, 170, 70, 5)" style="width:400px"/>
+            <button onclick="javascript:eval(commandTextInput.value)">call</button>
+        </div>
         
         <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
              JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
