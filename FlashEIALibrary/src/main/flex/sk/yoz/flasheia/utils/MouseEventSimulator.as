@@ -9,19 +9,14 @@ package sk.yoz.flasheia.utils
 
     public class MouseEventSimulator
     {
-        public static function downAt(stage:Stage, x:Number, y:Number):void
-        {
-            mouseAt(MouseEvent.MOUSE_DOWN, stage, x, y);
-        }
-        
-        public static function upAt(stage:Stage, x:Number, y:Number):void
-        {
-            mouseAt(MouseEvent.MOUSE_UP, stage, x, y);
-        }
-        
         public static function clickAt(stage:Stage, x:Number, y:Number):void
         {
             mouseAt(MouseEvent.CLICK, stage, x, y);
+        }
+        
+        public static function mouseDownAt(stage:Stage, x:Number, y:Number):void
+        {
+            mouseAt(MouseEvent.MOUSE_DOWN, stage, x, y);
         }
         
         public static function mouseMoveAt(stage:Stage, x:Number, y:Number):void
@@ -34,14 +29,19 @@ package sk.yoz.flasheia.utils
             mouseAt(MouseEvent.MOUSE_OVER, stage, x, y);
         }
         
-        public static function rollOverAt(stage:Stage, x:Number, y:Number):void
+        public static function mouseUpAt(stage:Stage, x:Number, y:Number):void
         {
-            mouseAt(MouseEvent.ROLL_OVER, stage, x, y);
+            mouseAt(MouseEvent.MOUSE_UP, stage, x, y);
         }
         
         public static function rollOutAt(stage:Stage, x:Number, y:Number):void
         {
             mouseAt(MouseEvent.ROLL_OUT, stage, x, y);
+        }
+        
+        public static function rollOverAt(stage:Stage, x:Number, y:Number):void
+        {
+            mouseAt(MouseEvent.ROLL_OVER, stage, x, y);
         }
         
         private static function mouseAt(type:String, stage:Stage, x:Number, y:Number):void
