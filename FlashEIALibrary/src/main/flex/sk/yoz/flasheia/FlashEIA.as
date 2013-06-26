@@ -1,8 +1,13 @@
 package sk.yoz.flasheia
 {
+    import flash.display.BitmapData;
     import flash.display.Stage;
     import flash.events.EventDispatcher;
     import flash.external.ExternalInterface;
+    import flash.geom.Matrix;
+    import flash.utils.ByteArray;
+    
+    import mx.utils.SHA256;
     
     import sk.yoz.flasheia.events.FlashEIAEvent;
     import sk.yoz.flasheia.utils.MouseEventSimulator;
@@ -11,8 +16,6 @@ package sk.yoz.flasheia
     [Event(name="executionEnd", type="sk.yoz.flasheia.events.FlashEIAEvent")]
     public class FlashEIA extends EventDispatcher
     {
-        public var silent:Boolean;
-        
         private var stage:Stage;
         
         private static const SCRIPT:XML = <script>
@@ -76,6 +79,11 @@ package sk.yoz.flasheia
                         {
                             FlashEIA.getFlash(id).smartDragFromTo(x0, y0, x1, y1, 
                                 FlashEIA.defaultize(steps, 3));
+                        },
+                        
+                        screenshot: function(id, x, y, width, height)
+                        {
+                            FlashEIA.getFlash(id).screenshot(x, y, width, height);
                         }
                     };
                 }
@@ -102,6 +110,7 @@ package sk.yoz.flasheia
             ExternalInterface.addCallback("rollOverAt", rollOverAt);
             ExternalInterface.addCallback("smartClickAt", smartClickAt);
             ExternalInterface.addCallback("smartDragFromTo", smartDragFromTo);
+            ExternalInterface.addCallback("screenshot", screenshot);
             
             ExternalInterface.call(SCRIPT);
             
@@ -110,9 +119,6 @@ package sk.yoz.flasheia
         
         public function notify(message:String):void
         {
-            if(silent)
-                return;
-            
             ExternalInterface.call("alert", message);
         }
         
@@ -191,6 +197,23 @@ package sk.yoz.flasheia
             MouseEventSimulator.rollOutAt(stage, x1, y1);
             
             dispatchEnd("smartDragFromTo", arguments);
+        }
+        
+        private function screenshot(x:Number, y:Number, width:Number, height:Number):void
+        {
+            var matrix:Matrix = new Matrix(1, 0, 0, 1, -x, -y);
+            var bitmapData:BitmapData = new BitmapData(width, height, true, 0x0);
+            try
+            {
+                bitmapData.draw(stage, matrix);
+            }
+            catch(error:Error)
+            {
+                return;
+            }
+            var bytes:ByteArray = bitmapData.getPixels(bitmapData.rect);
+            var digest:String = SHA256.computeDigest(bytes);
+            notify(digest);
         }
         
         private function dispatchBegin(method:String, arguments:Array):void
